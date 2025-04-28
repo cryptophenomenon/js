@@ -13,6 +13,7 @@ import type {
   SendTransactionOption,
 } from "../../../interfaces/wallet.js";
 import { getUserStatus } from "../actions/get-enclave-user-status.js";
+import { signAuthorization as signEnclaveAuthorization } from "../actions/sign-authorization.enclave.js";
 import { signMessage as signEnclaveMessage } from "../actions/sign-message.enclave.js";
 import { signTransaction as signEnclaveTransaction } from "../actions/sign-transaction.enclave.js";
 import { signTypedData as signEnclaveTypedData } from "../actions/sign-typed-data.enclave.js";
@@ -138,7 +139,7 @@ export class EnclaveWallet implements IWebWallet {
         client,
         chain: getCachedChain(tx.chainId),
       });
-      const transaction: Record<string, Hex | number | undefined> = {
+      const transaction: Record<string, unknown> = {
         to: tx.to ? getAddress(tx.to) : undefined,
         data: tx.data,
         value: hexlify(tx.value),
@@ -158,7 +159,12 @@ export class EnclaveWallet implements IWebWallet {
         chainId: toHex(tx.chainId),
       };
 
-      if (hexlify(tx.maxFeePerGas)) {
+      if (tx.authorizationList && tx.authorizationList.length > 0) {
+        transaction.type = 4;
+        transaction.authorizationList = tx.authorizationList;
+        transaction.maxFeePerGas = hexlify(tx.maxFeePerGas);
+        transaction.maxPriorityFeePerGas = hexlify(tx.maxPriorityFeePerGas);
+      } else if (hexlify(tx.maxFeePerGas)) {
         transaction.maxFeePerGas = hexlify(tx.maxFeePerGas);
         transaction.maxPriorityFeePerGas = hexlify(tx.maxPriorityFeePerGas);
         transaction.type = 2;
@@ -166,6 +172,8 @@ export class EnclaveWallet implements IWebWallet {
         transaction.gasPrice = hexlify(tx.gasPrice);
         transaction.type = 0;
       }
+
+      console.log("Signing transaction", transaction);
 
       return signEnclaveTransaction({
         client,
@@ -242,6 +250,22 @@ export class EnclaveWallet implements IWebWallet {
         });
 
         return signature as Hex;
+      },
+      async signAuthorization(payload) {
+        const authorization = await signEnclaveAuthorization({
+          client,
+          payload,
+          storage,
+        });
+        console.log("-- DEBUG -- authorization", authorization);
+        return {
+          address: getAddress(authorization.address),
+          chainId: Number.parseInt(authorization.chainId),
+          nonce: BigInt(authorization.nonce),
+          r: BigInt(authorization.r),
+          s: BigInt(authorization.s),
+          yParity: Number.parseInt(authorization.yParity),
+        };
       },
     };
   }

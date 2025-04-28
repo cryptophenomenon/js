@@ -27,6 +27,7 @@ export function getBytecode(contract: ThirdwebContract): Promise<Hex> {
       address: contract.address,
       blockTag: "latest",
     });
+    console.log("getBytecode", result);
     if (result === "0x") {
       BYTECODE_CACHE.delete(contract);
     }

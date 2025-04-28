@@ -35,9 +35,14 @@ export async function extractErrorResult<abi extends Abi>(args: {
     if (errorObj.data) {
       if (errorObj.data !== "0x" && isHex(errorObj.data)) {
         let abi = contract?.abi;
+        console.log("Extracting error from data", errorObj.data, contract, abi);
         if (contract && !abi) {
-          abi = await resolveContractAbi(contract).catch(() => undefined);
+          abi = await resolveContractAbi(contract).catch((err) => {
+            console.error("Error resolving ABI", err);
+            return undefined;
+          });
         }
+        console.log("Resolved ABI", abi);
         const parsedError = decodeErrorResult({
           data: errorObj.data,
           abi,

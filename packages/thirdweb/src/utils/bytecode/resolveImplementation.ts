@@ -48,6 +48,13 @@ export async function resolveImplementation(
 
   // check other proxy types
   let implementationAddress: string | undefined;
+
+  // check for 7702 delegation
+  if (originalBytecode.startsWith("0xef0100")) {
+    implementationAddress = `0x${originalBytecode.slice(6, 46)}`;
+    console.log("7702 delegation detected", implementationAddress);
+  }
+
   if (beacon && beacon !== AddressZero) {
     // In case of a BeaconProxy, it is setup as BeaconProxy --> Beacon --> Implementation
     // Hence we replace the proxy address with Beacon address, and continue further resolving below
