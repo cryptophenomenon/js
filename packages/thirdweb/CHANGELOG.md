@@ -1,5 +1,15 @@
 # thirdweb
 
+## 5.96.5
+
+### Patch Changes
+
+- [#6869](https://github.com/thirdweb-dev/js/pull/6869) [`880650d`](https://github.com/thirdweb-dev/js/commit/880650d148786426b45b6bcd2a881b82008b8c49) Thanks [@kumaryash90](https://github.com/kumaryash90)! - Fix module deployment with refs and zk
+
+- [#6870](https://github.com/thirdweb-dev/js/pull/6870) [`fd91ee8`](https://github.com/thirdweb-dev/js/commit/fd91ee8dfefeafd3d2282009bcf70eee98b9764e) Thanks [@joaquim-verges](https://github.com/joaquim-verges)! - Handle fixed size arrays in solidity inputs
+
+- [#6871](https://github.com/thirdweb-dev/js/pull/6871) [`0aadcd4`](https://github.com/thirdweb-dev/js/commit/0aadcd443455188694dcda35546e57848d6f2cf3) Thanks [@joaquim-verges](https://github.com/joaquim-verges)! - Show injected wallet icon when available
+
 ## 5.96.4
 
 ### Patch Changes
